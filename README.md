@@ -59,7 +59,12 @@ Password: Faculty123!
 
 ### Student
 
+Student 1
 Email: [student1@vgc.ie](mailto:student1@vgc.ie)
+Password: Student123!
+
+Student 2
+Email: [student2@vgc.ie](mailto:student2@vgc.ie)
 Password: Student123!
 
 ---
