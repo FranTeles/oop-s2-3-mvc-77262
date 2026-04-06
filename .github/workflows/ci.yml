@@ -39,10 +39,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test with coverage
-        run: dotnet test ${{ env.TEST_PROJECT }} --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=${{ github.workspace }}/coverage/
-
-      - name: List coverage files
-        run: find ${{ github.workspace }}/coverage -maxdepth 2 -type f || true
+        run: dotnet test ${{ env.TEST_PROJECT }} --configuration Release --no-build --collect:"XPlat Code Coverage"
 
       - name: Install ReportGenerator tool
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
@@ -50,7 +47,7 @@ jobs:
       - name: Generate HTML coverage report
         run: |
           reportgenerator \
-          -reports:${{ github.workspace }}/coverage/coverage.cobertura.xml \
+          -reports:**/coverage.cobertura.xml \
           -targetdir:coveragereport \
           -reporttypes:Html
 
