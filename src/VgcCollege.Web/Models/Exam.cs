@@ -7,6 +7,7 @@ namespace VgcCollege.Web.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Course")]
         public int CourseId { get; set; }
 
         public Course? Course { get; set; }
@@ -19,8 +20,10 @@ namespace VgcCollege.Web.Models
         public DateTime Date { get; set; }
 
         [Range(0, 1000)]
+        [Display(Name = "Max Score")]
         public double MaxScore { get; set; }
 
+        [Display(Name = "Results Released")]
         public bool ResultsReleased { get; set; }
 
         public ICollection<ExamResult> ExamResults { get; set; } = new List<ExamResult>();

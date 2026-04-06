@@ -4,12 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="page-header">
+    <h2>Branch</h2>
+    <a asp-action="Create" class="btn btn-primary">Create New Branch</a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="table-card">
+    <table class="table table-hover align-middle mb-0">
     <thead>
         <tr>
             <th>
@@ -18,7 +19,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Address)
             </th>
-            <th></th>
+                <th style="width: 240px;">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -30,12 +31,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Address)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+                    <td class="table-actions">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn-action btn-edit">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn-action btn-details">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn-action btn-delete">Delete</a>
+                    </td>
         </tr>
 }
     </tbody>
 </table>
+</div>

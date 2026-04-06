@@ -4,41 +4,40 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="page-header">
+    <h1>Create Exam Result</h1>
+</div>
 
-<h4>ExamResult</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="form-card">
+    <div class="row">
+        <div class="col-lg-8">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ExamId" class="control-label"></label>
+                <div class="mb-3">
+                    <label asp-for="ExamId" class="form-label"></label>
                 <select asp-for="ExamId" class ="form-control" asp-items="ViewBag.ExamId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="StudentProfileId" class="control-label"></label>
+                <div class="mb-3">
+                    <label asp-for="StudentProfileId" class="form-label"></label>
                 <select asp-for="StudentProfileId" class ="form-control" asp-items="ViewBag.StudentProfileId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="Score" class="control-label"></label>
+                <div class="mb-3">
+                    <label asp-for="Score" class="form-label"></label>
                 <input asp-for="Score" class="form-control" />
                 <span asp-validation-for="Score" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Grade" class="control-label"></label>
+                <div class="mb-3">
+                    <label asp-for="Grade" class="form-label"></label>
                 <input asp-for="Grade" class="form-control" />
                 <span asp-validation-for="Grade" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

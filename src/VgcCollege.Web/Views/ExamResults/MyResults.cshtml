@@ -1,25 +1,45 @@
 ﻿@model IEnumerable<VgcCollege.Web.Models.ExamResult>
 
-<h2>My Exam Results</h2>
+@{
+    ViewData["Title"] = "My Results";
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Exam</th>
-            <th>Course</th>
-            <th>Score</th>
-            <th>Grade</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Exam.Title</td>
-                <td>@item.Exam.Course.Name</td>
-                <td>@item.Score</td>
-                <td>@item.Grade</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="page-header">
+    <h2>My Exam Results</h2>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="details-card">
+        <h5 class="mb-3">No released results available</h5>
+        <p class="mb-0 text-muted">
+            Your exam results will appear here once they have been released by the college.
+        </p>
+    </div>
+}
+else
+{
+    <div class="table-card">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Exam</th>
+                    <th>Course</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Exam?.Title</td>
+                        <td>@item.Exam?.Course?.Name</td>
+                        <td>@item.Score</td>
+                        <td>@item.Grade</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

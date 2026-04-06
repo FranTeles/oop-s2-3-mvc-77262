@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<h2 class="section-title">Student Dashboard</h2>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="dashboard-card">
+            <h5>My Results</h5>
+            <p>View your released exam results.</p>
+            <a class="btn btn-primary mt-3" asp-controller="ExamResults" asp-action="MyResults">Open My Results</a>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="dashboard-card">
+            <h5>Welcome</h5>
+            <p>Your dashboard gives you access only to information relevant to your account.</p>
+        </div>
+    </div>
+</div>

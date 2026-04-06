@@ -11,17 +11,21 @@ namespace VgcCollege.Web.Models
         public string Name { get; set; } = string.Empty;
 
         [Required]
+        [Display(Name = "Branch")]
         public int BranchId { get; set; }
 
         public Branch? Branch { get; set; }
 
+        [Display(Name = "Faculty")]
         public int? FacultyProfileId { get; set; }
         public FacultyProfile? FacultyProfile { get; set; }
 
         [DataType(DataType.Date)]
+        [Display(Name = "Start Date")]
         public DateTime StartDate { get; set; }
 
         [DataType(DataType.Date)]
+        [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
 
         public ICollection<CourseEnrolment> CourseEnrolments { get; set; } = new List<CourseEnrolment>();

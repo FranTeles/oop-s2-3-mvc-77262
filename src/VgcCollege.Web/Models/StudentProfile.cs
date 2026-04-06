@@ -12,16 +12,20 @@ namespace VgcCollege.Web.Models
 
         [Required]
         [StringLength(100)]
+        [Display(Name = "Full Name")]
         public string Name { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
+        [Display(Name = "Email Address")]
         public string Email { get; set; } = string.Empty;
 
         [Phone]
+        [Display(Name = "Phone Number")]
         public string? Phone { get; set; }
 
         [StringLength(200)]
+        [Display(Name = "Address")]
         public string? Address { get; set; }
 
         [Display(Name = "Student Number")]

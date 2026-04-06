@@ -93,7 +93,7 @@ namespace VgcCollege.Tests.Tests
                 StudentProfileId = 1,
                 CourseId = 1,
                 EnrolDate = DateTime.Today,
-                Status = "Active"
+                Status = EnrolmentStatus.Active
             });
 
             await context.SaveChangesAsync();

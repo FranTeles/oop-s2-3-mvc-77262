@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h2 class="section-title">Admin Dashboard</h2>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <h5>Branches</h5>
+            <p>Manage college branches and locations.</p>
+            <a class="btn btn-primary mt-3" asp-controller="Branches" asp-action="Index">Open Branches</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <h5>Courses</h5>
+            <p>Create and manage courses and faculty assignments.</p>
+            <a class="btn btn-primary mt-3" asp-controller="Courses" asp-action="Index">Open Courses</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <h5>Students</h5>
+            <p>View and manage student profiles.</p>
+            <a class="btn btn-primary mt-3" asp-controller="StudentProfiles" asp-action="Index">Open Students</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <h5>Enrolments</h5>
+            <p>Manage student enrolments by course.</p>
+            <a class="btn btn-primary mt-3" asp-controller="CourseEnrolments" asp-action="Index">Open Enrolments</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <h5>Assignments & Gradebook</h5>
+            <p>Track assignments and student academic progress.</p>
+            <a class="btn btn-primary mt-3" asp-controller="AssignmentResults" asp-action="Index">Open Gradebook</a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <h5>Exams & Release</h5>
+            <p>Manage exam records and release results.</p>
+            <a class="btn btn-primary mt-3" asp-controller="Exams" asp-action="Index">Open Exams</a>
+        </div>
+    </div>
+</div>
+

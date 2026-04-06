@@ -179,14 +179,14 @@ namespace VgcCollege.Web.Data
                         StudentProfileId = student1.Id,
                         CourseId = computingCourse.Id,
                         EnrolDate = DateTime.Now.Date,
-                        Status = "Active"
+                        Status = EnrolmentStatus.Active
                     },
                     new CourseEnrolment
                     {
                         StudentProfileId = student2.Id,
                         CourseId = computingCourse.Id,
                         EnrolDate = DateTime.Now.Date,
-                        Status = "Active"
+                        Status = EnrolmentStatus.Active
                     }
                 );
                 await context.SaveChangesAsync();

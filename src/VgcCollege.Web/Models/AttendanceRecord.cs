@@ -7,6 +7,7 @@ namespace VgcCollege.Web.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Course")]
         public int CourseEnrolmentId { get; set; }
 
         public CourseEnrolment? CourseEnrolment { get; set; }

@@ -1,59 +1,59 @@
 ﻿@model IEnumerable<VgcCollege.Web.Models.Exam>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Exams";
 }
 
-<h1>Index</h1>
+<div class="page-header">
+    <h2>Exams</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Course)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxScore)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ResultsReleased)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Course.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxScore)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ResultsReleased)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
+    {
+        <a asp-action="Create" class="btn btn-primary">Create New Exam</a>
+    }
+</div>
+
+<div class="table-card">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Course</th>
+                <th>Date</th>
+                <th>Max Score</th>
+                <th>Results Released</th>
+                <th style="width: 260px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Course?.Name</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.MaxScore</td>
+                    <td>
+                        @if (item.ResultsReleased)
+                        {
+                            <span class="badge bg-success">Released</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Provisional</span>
+                        }
+                    </td>
+                    <td class="table-actions">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn-action btn-details">Details</a>
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Faculty"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn-action btn-edit">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-action btn-delete">Delete</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

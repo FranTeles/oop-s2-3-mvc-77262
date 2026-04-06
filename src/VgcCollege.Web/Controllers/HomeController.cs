@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using VgcCollege.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VgcCollege.Web.Controllers
 {
@@ -19,6 +20,24 @@ namespace VgcCollege.Web.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDashboard()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Faculty")]
+        public IActionResult FacultyDashboard()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Student")]
+        public IActionResult StudentDashboard()
         {
             return View();
         }

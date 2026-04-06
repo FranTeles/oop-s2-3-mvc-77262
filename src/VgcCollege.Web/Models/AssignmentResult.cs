@@ -7,11 +7,13 @@ namespace VgcCollege.Web.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Assignment")]
         public int AssignmentId { get; set; }
 
         public Assignment? Assignment { get; set; }
 
         [Required]
+        [Display(Name = "Studant Name")] 
         public int StudentProfileId { get; set; }
 
         public StudentProfile? StudentProfile { get; set; }
