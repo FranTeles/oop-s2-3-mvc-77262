@@ -1,0 +1,25 @@
+﻿@model IEnumerable<VgcCollege.Web.Models.ExamResult>
+
+<h2>My Exam Results</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Exam</th>
+            <th>Course</th>
+            <th>Score</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Exam.Title</td>
+                <td>@item.Exam.Course.Name</td>
+                <td>@item.Score</td>
+                <td>@item.Grade</td>
+            </tr>
+        }
+    </tbody>
+</table>

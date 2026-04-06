@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using VgcCollege.Web.Data;
 using VgcCollege.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace VgcCollege.Web.Controllers
 {
@@ -21,15 +22,32 @@ namespace VgcCollege.Web.Controllers
             _context = context;
         }
 
-        // GET: AssignmentResults
         public async Task<IActionResult> Index()
         {
-            var data = _context.AssignmentResults
+            var query = _context.AssignmentResults
                 .Include(a => a.Assignment)
                     .ThenInclude(a => a.Course)
-                .Include(a => a.StudentProfile);
+                .Include(a => a.StudentProfile)
+                .AsQueryable();
 
-            return View(await data.ToListAsync());
+            if (User.IsInRole("Faculty"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var faculty = await _context.FacultyProfiles
+                    .FirstOrDefaultAsync(f => f.IdentityUserId == userId);
+
+                if (faculty != null)
+                {
+                    query = query.Where(a => a.Assignment.Course.FacultyProfileId == faculty.Id);
+                }
+                else
+                {
+                    query = query.Where(a => false);
+                }
+            }
+
+            return View(await query.ToListAsync());
         }
 
         // GET: AssignmentResults/Details/5
@@ -79,14 +97,37 @@ namespace VgcCollege.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,AssignmentId,StudentProfileId,Score,Feedback")] AssignmentResult assignmentResult)
         {
+
+            var assignment = await _context.Assignments.FindAsync(assignmentResult.AssignmentId);
+
+            if (assignment != null && assignmentResult.Score > assignment.MaxScore)
+            {
+                ModelState.AddModelError("Score", $"Score cannot be greater than the maximum score ({assignment.MaxScore}).");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(assignmentResult);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Title", assignmentResult.AssignmentId);
-            ViewData["StudentProfileId"] = new SelectList(_context.StudentProfiles, "Id", "Email", assignmentResult.StudentProfileId);
+            ViewData["AssignmentId"] = new SelectList(
+                _context.Assignments.Include(a => a.Course)
+                .Select(a => new {
+                    a.Id,
+                    Display = a.Title + " (" + a.Course.Name + ")"
+                }),
+                "Id",
+                "Display",
+                assignmentResult.AssignmentId
+            );
+
+            ViewData["StudentProfileId"] = new SelectList(
+                _context.StudentProfiles,
+                "Id",
+                "Name",
+                assignmentResult.StudentProfileId
+            );
             return View(assignmentResult);
         }
 
@@ -103,8 +144,23 @@ namespace VgcCollege.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Title", assignmentResult.AssignmentId);
-            ViewData["StudentProfileId"] = new SelectList(_context.StudentProfiles, "Id", "Email", assignmentResult.StudentProfileId);
+            ViewData["AssignmentId"] = new SelectList(
+                _context.Assignments.Include(a => a.Course)
+                .Select(a => new {
+                    a.Id,
+                    Display = a.Title + " (" + a.Course.Name + ")"
+                }),
+                "Id",
+                "Display",
+                assignmentResult.AssignmentId
+            );
+
+            ViewData["StudentProfileId"] = new SelectList(
+                _context.StudentProfiles,
+                "Id",
+                "Name",
+                assignmentResult.StudentProfileId
+            );
             return View(assignmentResult);
         }
 
@@ -118,6 +174,13 @@ namespace VgcCollege.Web.Controllers
             if (id != assignmentResult.Id)
             {
                 return NotFound();
+            }
+
+            var assignment = await _context.Assignments.FindAsync(assignmentResult.AssignmentId);
+
+            if (assignment != null && assignmentResult.Score > assignment.MaxScore)
+            {
+                ModelState.AddModelError("Score", $"Score cannot be greater than the maximum score ({assignment.MaxScore}).");
             }
 
             if (ModelState.IsValid)
@@ -140,8 +203,23 @@ namespace VgcCollege.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssignmentId"] = new SelectList(_context.Assignments, "Id", "Title", assignmentResult.AssignmentId);
-            ViewData["StudentProfileId"] = new SelectList(_context.StudentProfiles, "Id", "Email", assignmentResult.StudentProfileId);
+            ViewData["AssignmentId"] = new SelectList(
+                _context.Assignments.Include(a => a.Course)
+                .Select(a => new {
+                    a.Id,
+                    Display = a.Title + " (" + a.Course.Name + ")"
+                }),
+                "Id",
+                "Display",
+                assignmentResult.AssignmentId
+            );
+
+            ViewData["StudentProfileId"] = new SelectList(
+                _context.StudentProfiles,
+                "Id",
+                "Name",
+                assignmentResult.StudentProfileId
+            );
             return View(assignmentResult);
         }
 

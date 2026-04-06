@@ -19,5 +19,7 @@ namespace VgcCollege.Web.Models
 
         [Phone]
         public string? Phone { get; set; }
+
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
     }
 }

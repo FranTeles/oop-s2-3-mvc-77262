@@ -66,6 +66,15 @@ namespace VgcCollege.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,StudentProfileId,CourseId,EnrolDate,Status")] CourseEnrolment courseEnrolment)
         {
+            bool alreadyEnrolled = await _context.CourseEnrolments
+                .AnyAsync(e => e.StudentProfileId == courseEnrolment.StudentProfileId
+                    && e.CourseId == courseEnrolment.CourseId);
+
+            if (alreadyEnrolled)
+            {
+                ModelState.AddModelError("", "This student is already enrolled in this course.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(courseEnrolment);

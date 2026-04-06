@@ -15,6 +15,9 @@ namespace VgcCollege.Web.Models
 
         public Branch? Branch { get; set; }
 
+        public int? FacultyProfileId { get; set; }
+        public FacultyProfile? FacultyProfile { get; set; }
+
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 

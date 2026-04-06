@@ -1,4 +1,4 @@
-﻿@model IEnumerable<VgcCollege.Web.Models.Course>
+﻿@model IEnumerable<VgcCollege.Web.Models.ExamResult>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,19 +13,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Exam)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Branch)
+                @Html.DisplayNameFor(model => model.StudentProfile)
             </th>
             <th>
-                Faculty
+                @Html.DisplayNameFor(model => model.Score)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                @Html.DisplayNameFor(model => model.Grade)
             </th>
             <th></th>
         </tr>
@@ -34,19 +31,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.Exam.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Branch.Name)
-            </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FacultyProfile.Name)
-                </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @Html.DisplayFor(modelItem => item.StudentProfile.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @Html.DisplayFor(modelItem => item.Score)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Grade)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

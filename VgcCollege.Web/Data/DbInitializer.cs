@@ -99,12 +99,14 @@ namespace VgcCollege.Web.Data
                 var dublinBranch = context.Branches.First(b => b.Name == "Dublin Branch");
                 var corkBranch = context.Branches.First(b => b.Name == "Cork Branch");
                 var galwayBranch = context.Branches.First(b => b.Name == "Galway Branch");
+                var facultyProfile = context.FacultyProfiles.First();
 
                 context.Courses.AddRange(
                     new Course
                     {
                         Name = "Computing Fundamentals",
                         BranchId = dublinBranch.Id,
+                        FacultyProfileId = facultyProfile.Id,
                         StartDate = new DateTime(2026, 1, 10),
                         EndDate = new DateTime(2026, 5, 30)
                     },
@@ -112,6 +114,7 @@ namespace VgcCollege.Web.Data
                     {
                         Name = "Business Management",
                         BranchId = corkBranch.Id,
+                        FacultyProfileId = facultyProfile.Id,
                         StartDate = new DateTime(2026, 1, 10),
                         EndDate = new DateTime(2026, 5, 30)
                     },
@@ -119,6 +122,7 @@ namespace VgcCollege.Web.Data
                     {
                         Name = "Digital Marketing",
                         BranchId = galwayBranch.Id,
+                        FacultyProfileId = facultyProfile.Id,
                         StartDate = new DateTime(2026, 1, 10),
                         EndDate = new DateTime(2026, 5, 30)
                     }
@@ -264,6 +268,19 @@ namespace VgcCollege.Web.Data
                         Grade = "A"
                     }
                 );
+                await context.SaveChangesAsync();
+            }
+
+            var existingFaculty = context.FacultyProfiles.FirstOrDefault();
+            if (existingFaculty != null)
+            {
+                var coursesWithoutFaculty = context.Courses.Where(c => c.FacultyProfileId == null).ToList();
+
+                foreach (var course in coursesWithoutFaculty)
+                {
+                    course.FacultyProfileId = existingFaculty.Id;
+                }
+
                 await context.SaveChangesAsync();
             }
         }

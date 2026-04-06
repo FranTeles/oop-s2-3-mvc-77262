@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using VgcCollege.Web.Data;
 using VgcCollege.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace VgcCollege.Web.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Faculty")]
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,8 +25,29 @@ namespace VgcCollege.Web.Controllers
         // GET: Courses
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Courses.Include(c => c.Branch);
-            return View(await applicationDbContext.ToListAsync());
+            var query = _context.Courses
+                .Include(c => c.Branch)
+                .Include(c => c.FacultyProfile)
+                .AsQueryable();
+
+            if (User.IsInRole("Faculty"))
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                var faculty = await _context.FacultyProfiles
+                    .FirstOrDefaultAsync(f => f.IdentityUserId == userId);
+
+                if (faculty != null)
+                {
+                    query = query.Where(c => c.FacultyProfileId == faculty.Id);
+                }
+                else
+                {
+                    query = query.Where(c => false);
+                }
+            }
+
+            return View(await query.ToListAsync());
         }
 
         // GET: Courses/Details/5
@@ -38,6 +60,7 @@ namespace VgcCollege.Web.Controllers
 
             var course = await _context.Courses
                 .Include(c => c.Branch)
+                .Include(c => c.FacultyProfile)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {
@@ -51,6 +74,7 @@ namespace VgcCollege.Web.Controllers
         public IActionResult Create()
         {
             ViewData["BranchId"] = new SelectList(_context.Branches, "Id", "Name");
+            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Name");
             return View();
         }
 
@@ -59,8 +83,13 @@ namespace VgcCollege.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,BranchId,StartDate,EndDate")] Course course)
+        public async Task<IActionResult> Create([Bind("Id,Name,BranchId,FacultyProfileId,StartDate,EndDate")] Course course)
         {
+            if (course.EndDate < course.StartDate)
+            {
+                ModelState.AddModelError("EndDate", "End date cannot be earlier than start date.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(course);
@@ -68,6 +97,7 @@ namespace VgcCollege.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BranchId"] = new SelectList(_context.Branches, "Id", "Name", course.BranchId);
+            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Name", course.FacultyProfileId);
             return View(course);
         }
 
@@ -85,6 +115,7 @@ namespace VgcCollege.Web.Controllers
                 return NotFound();
             }
             ViewData["BranchId"] = new SelectList(_context.Branches, "Id", "Name", course.BranchId);
+            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Name", course.FacultyProfileId);
             return View(course);
         }
 
@@ -93,11 +124,16 @@ namespace VgcCollege.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,BranchId,StartDate,EndDate")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,BranchId,FacultyProfileId,StartDate,EndDate")] Course course)
         {
             if (id != course.Id)
             {
                 return NotFound();
+            }
+
+            if (course.EndDate < course.StartDate)
+            {
+                ModelState.AddModelError("EndDate", "End date cannot be earlier than start date.");
             }
 
             if (ModelState.IsValid)
@@ -121,6 +157,7 @@ namespace VgcCollege.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BranchId"] = new SelectList(_context.Branches, "Id", "Name", course.BranchId);
+            ViewData["FacultyProfileId"] = new SelectList(_context.FacultyProfiles, "Id", "Name", course.FacultyProfileId);
             return View(course);
         }
 
@@ -134,6 +171,7 @@ namespace VgcCollege.Web.Controllers
 
             var course = await _context.Courses
                 .Include(c => c.Branch)
+                .Include(c => c.FacultyProfile)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {

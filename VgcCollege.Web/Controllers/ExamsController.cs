@@ -1,58 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using VgcCollege.Web.Data;
 using VgcCollege.Web.Models;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace VgcCollege.Web.Controllers
 {
     [Authorize(Roles = "Admin,Faculty")]
-    public class StudentProfilesController : Controller
+    public class ExamsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public StudentProfilesController(ApplicationDbContext context)
+        public ExamsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: StudentProfiles
+        // GET: Exams
         public async Task<IActionResult> Index()
         {
-            if (User.IsInRole("Admin"))
-            {
-                return View(await _context.StudentProfiles.ToListAsync());
-            }
-
-            if (User.IsInRole("Faculty"))
-            {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                var faculty = await _context.FacultyProfiles
-                    .FirstOrDefaultAsync(f => f.IdentityUserId == userId);
-
-                if (faculty == null)
-                {
-                    return View(new List<StudentProfile>());
-                }
-
-                var students = await _context.StudentProfiles
-                    .Where(s => s.CourseEnrolments.Any(e => e.Course.FacultyProfileId == faculty.Id))
-                    .ToListAsync();
-
-                return View(students);
-            }
-
-            return Forbid();
+            var applicationDbContext = _context.Exams.Include(e => e.Course);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: StudentProfiles/Details/5
+        // GET: Exams/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -60,40 +36,42 @@ namespace VgcCollege.Web.Controllers
                 return NotFound();
             }
 
-            var studentProfile = await _context.StudentProfiles
+            var exam = await _context.Exams
+                .Include(e => e.Course)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (studentProfile == null)
+            if (exam == null)
             {
                 return NotFound();
             }
 
-            return View(studentProfile);
+            return View(exam);
         }
 
-        // GET: StudentProfiles/Create
+        // GET: Exams/Create
         public IActionResult Create()
         {
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name");
             return View();
         }
 
-        // POST: StudentProfiles/Create
+        // POST: Exams/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,Phone,Address,StudentNumber")] StudentProfile studentProfile)
+        public async Task<IActionResult> Create([Bind("Id,CourseId,Title,Date,MaxScore,ResultsReleased")] Exam exam)
         {
             if (ModelState.IsValid)
             {
-                studentProfile.IdentityUserId = Guid.NewGuid().ToString();
-                _context.Add(studentProfile);
+                _context.Add(exam);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(studentProfile);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name", exam.CourseId);
+            return View(exam);
         }
 
-        // GET: StudentProfiles/Edit/5
+        // GET: Exams/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -101,22 +79,23 @@ namespace VgcCollege.Web.Controllers
                 return NotFound();
             }
 
-            var studentProfile = await _context.StudentProfiles.FindAsync(id);
-            if (studentProfile == null)
+            var exam = await _context.Exams.FindAsync(id);
+            if (exam == null)
             {
                 return NotFound();
             }
-            return View(studentProfile);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name", exam.CourseId);
+            return View(exam);
         }
 
-        // POST: StudentProfiles/Edit/5
+        // POST: Exams/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdentityUserId,Name,Email,Phone,Address,StudentNumber")] StudentProfile studentProfile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseId,Title,Date,MaxScore,ResultsReleased")] Exam exam)
         {
-            if (id != studentProfile.Id)
+            if (id != exam.Id)
             {
                 return NotFound();
             }
@@ -125,12 +104,12 @@ namespace VgcCollege.Web.Controllers
             {
                 try
                 {
-                    _context.Update(studentProfile);
+                    _context.Update(exam);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentProfileExists(studentProfile.Id))
+                    if (!ExamExists(exam.Id))
                     {
                         return NotFound();
                     }
@@ -141,10 +120,11 @@ namespace VgcCollege.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(studentProfile);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Name", exam.CourseId);
+            return View(exam);
         }
 
-        // GET: StudentProfiles/Delete/5
+        // GET: Exams/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -152,34 +132,35 @@ namespace VgcCollege.Web.Controllers
                 return NotFound();
             }
 
-            var studentProfile = await _context.StudentProfiles
+            var exam = await _context.Exams
+                .Include(e => e.Course)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (studentProfile == null)
+            if (exam == null)
             {
                 return NotFound();
             }
 
-            return View(studentProfile);
+            return View(exam);
         }
 
-        // POST: StudentProfiles/Delete/5
+        // POST: Exams/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var studentProfile = await _context.StudentProfiles.FindAsync(id);
-            if (studentProfile != null)
+            var exam = await _context.Exams.FindAsync(id);
+            if (exam != null)
             {
-                _context.StudentProfiles.Remove(studentProfile);
+                _context.Exams.Remove(exam);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentProfileExists(int id)
+        private bool ExamExists(int id)
         {
-            return _context.StudentProfiles.Any(e => e.Id == id);
+            return _context.Exams.Any(e => e.Id == id);
         }
     }
 }
