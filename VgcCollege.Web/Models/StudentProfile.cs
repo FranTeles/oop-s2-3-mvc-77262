@@ -6,6 +6,7 @@ namespace VgcCollege.Web.Models
     {
         public int Id { get; set; }
 
+        [ScaffoldColumn(false)]
         [Required]
         public string IdentityUserId { get; set; } = string.Empty;
 
