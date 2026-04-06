@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-test-and-report:
+  build-and-test:
     runs-on: ubuntu-latest
 
     env:
@@ -59,6 +59,15 @@ jobs:
         with:
           path: coveragereport
 
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
