@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-test-and-report:
+  build-and-test:
     runs-on: ubuntu-latest
 
     env:
@@ -39,7 +39,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test with coverage
-        run: dotnet test ${{ env.TEST_PROJECT }} --configuration Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/coverage.xml
+        run: dotnet test ${{ env.TEST_PROJECT }} --configuration Release --no-build --collect:"XPlat Code Coverage"
 
       - name: Install ReportGenerator tool
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
@@ -47,7 +47,7 @@ jobs:
       - name: Generate HTML coverage report
         run: |
           reportgenerator \
-          -reports:${{ env.TEST_PROJECT }}/TestResults/coverage.xml \
+          -reports:**/coverage.cobertura.xml \
           -targetdir:coveragereport \
           -reporttypes:Html
 
@@ -59,6 +59,15 @@ jobs:
         with:
           path: coveragereport
 
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
